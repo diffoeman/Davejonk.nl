@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geschiedenisquiz</title>
+    <title>Uitdagende Geschiedenisquiz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f4f4f4;
             color: #333;
             margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
         }
         #quiz-container {
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 700px;
             text-align: center;
         }
         h1 {
@@ -30,7 +29,7 @@
             color: #444;
         }
         .question {
-            font-size: 18px;
+            font-size: 20px;
             margin: 20px 0;
         }
         .options button {
@@ -47,16 +46,23 @@
         .options button:hover {
             background: #0056b3;
         }
+        #timer {
+            margin-top: 10px;
+            font-size: 18px;
+            color: red;
+            font-weight: bold;
+        }
         #result {
             margin-top: 20px;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div id="quiz-container">
-        <h1>Geschiedenisquiz</h1>
+        <h1>Uitdagende Geschiedenisquiz</h1>
+        <div id="timer">Tijd over: 20 seconden</div>
         <div id="question" class="question">Vraag wordt geladen...</div>
         <div id="options" class="options"></div>
         <div id="result"></div>
@@ -65,40 +71,74 @@
     <script>
         const questions = [
             {
-                question: "In welk jaar vond de Franse Revolutie plaats?",
-                options: ["1789", "1804", "1765", "1815"],
-                answer: "1789"
+                question: "Welke keizer bouwde de Chinese Muur verder uit?",
+                options: ["Kublai Khan", "Qin Shi Huang", "Han Wudi", "Ming Chengzu"],
+                answer: "Qin Shi Huang"
             },
             {
-                question: "Wie was de eerste president van de Verenigde Staten?",
-                options: ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"],
-                answer: "George Washington"
+                question: "In welk jaar werd de Magna Carta ondertekend?",
+                options: ["1215", "1066", "1492", "1314"],
+                answer: "1215"
             },
             {
-                question: "Welke muur viel in 1989, wat leidde tot de hereniging van Duitsland?",
-                options: ["Chinese Muur", "Berliner Muur", "Maginotlinie", "IJzeren Gordijn"],
-                answer: "Berliner Muur"
+                question: "Welke stad werd in 1453 ingenomen door de Ottomanen?",
+                options: ["Caïro", "Athene", "Rome", "Constantinopel"],
+                answer: "Constantinopel"
             },
             {
-                question: "Wat was de hoofdstad van het Romeinse Rijk?",
-                options: ["Rome", "Constantinopel", "Athene", "Carthago"],
-                answer: "Rome"
+                question: "Wie schreef 'De Staat' (The Republic)?",
+                options: ["Aristoteles", "Plato", "Socrates", "Herodotus"],
+                answer: "Plato"
             },
             {
-                question: "Wie schreef het communistisch manifest?",
-                options: ["Karl Marx en Friedrich Engels", "Lenin", "Trotski", "Mao Zedong"],
-                answer: "Karl Marx en Friedrich Engels"
+                question: "Wat veroorzaakte de pest in de middeleeuwen?",
+                options: ["Bacterie", "Virus", "Schimmel", "Vervuild water"],
+                answer: "Bacterie"
+            },
+            {
+                question: "Wie was de farao tijdens de bouw van de Grote Piramide van Gizeh?",
+                options: ["Toetanchamon", "Cheops", "Ramses II", "Hatsjepsoet"],
+                answer: "Cheops"
+            },
+            {
+                question: "Wat was de laatste grote veldslag van Napoleon?",
+                options: ["Austerlitz", "Trafalgar", "Waterloo", "Borodino"],
+                answer: "Waterloo"
+            },
+            {
+                question: "Wanneer eindigde de Tweede Wereldoorlog in Europa?",
+                options: ["1944", "1945", "1946", "1947"],
+                answer: "1945"
+            },
+            {
+                question: "Wie was de oprichter van het Mongoolse Rijk?",
+                options: ["Genghis Khan", "Attila de Hun", "Kublai Khan", "Timoer Lenk"],
+                answer: "Genghis Khan"
+            },
+            {
+                question: "Wat was de naam van de eerste menselijke ruimtevlucht?",
+                options: ["Apollo 11", "Vostok 1", "Sputnik", "Gemini 4"],
+                answer: "Vostok 1"
             }
         ];
 
         let currentQuestionIndex = 0;
         let score = 0;
+        let wrong = 0;
+        let timer;
+        let timeLeft = 20;
 
         const questionElement = document.getElementById("question");
         const optionsElement = document.getElementById("options");
         const resultElement = document.getElementById("result");
+        const timerElement = document.getElementById("timer");
 
         function loadQuestion() {
+            clearInterval(timer); // Reset timer
+            timeLeft = 20;
+            timerElement.innerText = `Tijd over: ${timeLeft} seconden`;
+            timer = setInterval(countdown, 1000);
+
             const currentQuestion = questions[currentQuestionIndex];
             questionElement.innerText = currentQuestion.question;
             optionsElement.innerHTML = "";
@@ -110,14 +150,31 @@
             });
         }
 
+        function countdown() {
+            timeLeft--;
+            timerElement.innerText = `Tijd over: ${timeLeft} seconden`;
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                wrong++;
+                alert("⏰ Tijd voorbij! Dit antwoord telt als fout.");
+                nextQuestion();
+            }
+        }
+
         function checkAnswer(selected) {
+            clearInterval(timer);
             const currentQuestion = questions[currentQuestionIndex];
             if (selected === currentQuestion.answer) {
                 score++;
                 alert("✅ Goed antwoord!");
             } else {
-                alert(`❌ Fout antwoord! Het juiste antwoord was: ${currentQuestion.answer}`);
+                wrong++;
+                alert(`❌ Fout! Het juiste antwoord was: ${currentQuestion.answer}`);
             }
+            nextQuestion();
+        }
+
+        function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
@@ -129,7 +186,8 @@
         function showResult() {
             questionElement.innerText = "Quiz voltooid!";
             optionsElement.innerHTML = "";
-            resultElement.innerText = `Je hebt ${score} van de ${questions.length} vragen goed!`;
+            timerElement.innerText = "";
+            resultElement.innerHTML = `Je hebt ${score} van de ${questions.length} vragen goed! Fouten: ${wrong}`;
         }
 
         loadQuestion();
