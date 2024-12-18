@@ -15,18 +15,6 @@
         h1 {
             margin: 20px;
         }
-        #game {
-            position: relative;
-            display: inline-block;
-            margin-top: 20px;
-        }
-        #europe-map {
-            width: 100%;
-            max-width: 800px;
-            height: auto;
-            border: 2px solid #333;
-            cursor: crosshair;
-        }
         #info {
             margin-top: 10px;
             font-size: 18px;
@@ -36,87 +24,65 @@
             margin-top: 10px;
             font-size: 16px;
         }
+        svg {
+            margin-top: 20px;
+            width: 80%;
+            height: auto;
+            cursor: pointer;
+        }
+        .country {
+            fill: #d9d9d9;
+            stroke: #333;
+            stroke-width: 0.5;
+            transition: fill 0.3s;
+        }
+        .country:hover {
+            fill: #ff8c00;
+        }
     </style>
 </head>
 <body>
     <h1>Raad het Land - Klik op de Kaart van Europa 🌍</h1>
     <p id="info">Klik op: <span id="country-name">...</span></p>
-    <div id="game">
-<img src="https://i.imgur.com/5K0bC0n.png" alt="Europese kaart" id="europe-map">
-    </div>
     <div id="score">Goed: <span id="correct">0</span> | Fout: <span id="wrong">0</span></div>
+    
+    <!-- SVG Kaart -->
+    <svg id="europe-map" viewBox="0 0 1000 800">
+        <!-- Een paar voorbeelden: elk land krijgt een id -->
+        <path class="country" id="nederland" d="M200 100 L220 120 L200 140 Z"></path>
+        <path class="country" id="belgie" d="M180 120 L200 140 L180 160 Z"></path>
+        <path class="country" id="duitsland" d="M220 120 L240 140 L220 160 Z"></path>
+        <!-- Hier voeg je alle Europese landen toe met juiste coördinaten -->
+    </svg>
 
     <script>
-        const countries = {
-            "nederland": { x: 220, y: 140 },
-            "belgië": { x: 210, y: 160 },
-            "luxemburg": { x: 220, y: 170 },
-            "duitsland": { x: 250, y: 150 },
-            "frankrijk": { x: 180, y: 180 },
-            "spanje": { x: 130, y: 240 },
-            "portugal": { x: 100, y: 240 },
-            "italië": { x: 250, y: 200 },
-            "zwitserland": { x: 220, y: 180 },
-            "oostenrijk": { x: 260, y: 170 },
-            "verenigd koninkrijk": { x: 150, y: 120 },
-            "ierland": { x: 120, y: 120 },
-            "noorwegen": { x: 180, y: 60 },
-            "zweden": { x: 210, y: 70 },
-            "finland": { x: 260, y: 80 },
-            "denemarken": { x: 220, y: 110 },
-            "polen": { x: 300, y: 140 },
-            "tsjechië": { x: 280, y: 160 },
-            "hongarije": { x: 290, y: 180 },
-            "roemenië": { x: 340, y: 190 },
-            "bulgarije": { x: 350, y: 210 },
-            "griekenland": { x: 340, y: 250 },
-            "turkije": { x: 390, y: 220 },
-            "rusland": { x: 500, y: 90 },
-            "estland": { x: 320, y: 90 },
-            "letland": { x: 320, y: 110 },
-            "litouwen": { x: 320, y: 130 },
-            "vaticanstad": { x: 250, y: 210 },
-            "andorra": { x: 170, y: 200 },
-            "monaco": { x: 190, y: 190 }
-        };
-
-        let currentCountry = "";
-        let correct = 0;
-        let wrong = 0;
-
-        const map = document.getElementById("europe-map");
-        const info = document.getElementById("info");
+        const countries = ["nederland", "belgie", "duitsland"]; // Voeg alle landen hier toe
+        let correct = 0, wrong = 0;
         const correctScore = document.getElementById("correct");
         const wrongScore = document.getElementById("wrong");
+        const info = document.getElementById("country-name");
+        const map = document.getElementById("europe-map");
 
-        function randomCountry() {
-            const keys = Object.keys(countries);
-            return keys[Math.floor(Math.random() * keys.length)];
-        }
+        let currentCountry = "";
 
         function loadNewCountry() {
-            currentCountry = randomCountry();
-            info.innerText = `Klik op: ${currentCountry.charAt(0).toUpperCase() + currentCountry.slice(1)}`;
+            currentCountry = countries[Math.floor(Math.random() * countries.length)];
+            info.innerText = currentCountry.charAt(0).toUpperCase() + currentCountry.slice(1);
         }
 
         map.addEventListener("click", (e) => {
-            const rect = map.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
-
-            const target = countries[currentCountry];
-            const distance = Math.sqrt((clickX - target.x) ** 2 + (clickY - target.y) ** 2);
-
-            if (distance < 20) {
-                alert(`🎉 Goed gedaan! Je hebt ${currentCountry} gevonden.`);
-                correct++;
-            } else {
-                alert(`❌ Mis! Dat was niet ${currentCountry}.`);
-                wrong++;
+            if (e.target.classList.contains("country")) {
+                if (e.target.id === currentCountry) {
+                    alert(`🎉 Goed gedaan! Je hebt ${currentCountry} gevonden.`);
+                    correct++;
+                } else {
+                    alert(`❌ Fout! Dat was ${e.target.id}, niet ${currentCountry}.`);
+                    wrong++;
+                }
+                correctScore.innerText = correct;
+                wrongScore.innerText = wrong;
+                loadNewCountry();
             }
-            correctScore.innerText = correct;
-            wrongScore.innerText = wrong;
-            loadNewCountry();
         });
 
         window.onload = loadNewCountry;
