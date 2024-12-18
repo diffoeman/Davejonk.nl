@@ -1,10 +1,171 @@
+@ -1,10 +1,166 @@
 <!DOCTYPE html>
 <html>
+<html lang="nl">
 <head>
     <title>Welkom op mijn website!</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Spel</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+        }
+
+        canvas {
+            background: #222;
+            display: block;
+            border: 2px solid #fff;
+        }
+    </style>
 </head>
 <body>
     <h1>Welkom op Dave Jonk's Website</h1>
     <p>Dit is mijn persoonlijke website, gebouwd met GitHub!</p>
+    <canvas id="pong" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById("pong");
+        const context = canvas.getContext("2d");
+
+        // Ball object
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            speed: 5,
+            velocityX: 5,
+            velocityY: 5,
+            color: "#fff"
+        };
+
+        // Paddle objects
+        const player = {
+            x: 10,
+            y: canvas.height / 2 - 50,
+            width: 10,
+            height: 100,
+            color: "#fff",
+            score: 0
+        };
+
+        const ai = {
+            x: canvas.width - 20,
+            y: canvas.height / 2 - 50,
+            width: 10,
+            height: 100,
+            color: "#fff",
+            score: 0
+        };
+
+        // Net
+        function drawNet() {
+            for (let i = 0; i <= canvas.height; i += 15) {
+                context.fillStyle = "#fff";
+                context.fillRect(canvas.width / 2 - 1, i, 2, 10);
+            }
+        }
+
+        // Draw rectangle
+        function drawRect(x, y, w, h, color) {
+            context.fillStyle = color;
+            context.fillRect(x, y, w, h);
+        }
+
+        // Draw ball
+        function drawBall(x, y, r, color) {
+            context.fillStyle = color;
+            context.beginPath();
+            context.arc(x, y, r, 0, Math.PI * 2, false);
+            context.closePath();
+            context.fill();
+        }
+
+        // Move paddles
+        canvas.addEventListener("mousemove", movePaddle);
+        function movePaddle(event) {
+            const rect = canvas.getBoundingClientRect();
+            player.y = event.clientY - rect.top - player.height / 2;
+        }
+
+        // Reset ball
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.velocityX = -ball.velocityX;
+            ball.speed = 5;
+        }
+
+        // Collision detection
+        function collision(b, p) {
+            return (
+                b.x + b.radius > p.x &&
+                b.x - b.radius < p.x + p.width &&
+                b.y + b.radius > p.y &&
+                b.y - b.radius < p.y + p.height
+            );
+        }
+
+        // Update game logic
+        function update() {
+            ball.x += ball.velocityX;
+            ball.y += ball.velocityY;
+
+            // Simple AI for opponent
+            ai.y += (ball.y - (ai.y + ai.height / 2)) * 0.1;
+
+            // Ball collision with top and bottom walls
+            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                ball.velocityY = -ball.velocityY;
+            }
+
+            // Check which paddle the ball hits
+            const playerPaddle = ball.x < canvas.width / 2 ? player : ai;
+
+            // Collision with paddles
+            if (collision(ball, playerPaddle)) {
+                ball.velocityX = -ball.velocityX;
+                ball.speed += 0.5;
+            }
+
+            // Scoring
+            if (ball.x - ball.radius < 0) {
+                ai.score++;
+                resetBall();
+            } else if (ball.x + ball.radius > canvas.width) {
+                player.score++;
+                resetBall();
+            }
+        }
+
+        // Render the game
+        function render() {
+            drawRect(0, 0, canvas.width, canvas.height, "#000"); // Clear canvas
+            drawNet();
+            drawRect(player.x, player.y, player.width, player.height, player.color);
+            drawRect(ai.x, ai.y, ai.width, ai.height, ai.color);
+            drawBall(ball.x, ball.y, ball.radius, ball.color);
+
+            // Display scores
+            context.fillStyle = "#fff";
+            context.font = "35px Arial";
+            context.fillText(player.score, canvas.width / 4, 50);
+            context.fillText(ai.score, (3 * canvas.width) / 4, 50);
+        }
+
+        // Game loop
+        function gameLoop() {
+            update();
+            render();
+        }
+
+        setInterval(gameLoop, 1000 / 60);
+    </script>
 </body>
 </html>
