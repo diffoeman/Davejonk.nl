@@ -3,194 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uitdagende Geschiedenisquiz</title>
+    <title>Jonk Multiservices - SISGrass Specialist</title>
     <style>
+        /* Algemene stijl */
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            color: #333;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
         }
-        #quiz-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 700px;
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 20px;
-            color: #444;
-        }
-        .question {
-            font-size: 20px;
-            margin: 20px 0;
-        }
-        .options button {
+        header {
             background: #007BFF;
             color: white;
-            border: none;
-            padding: 10px;
-            margin: 10px 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
+            padding: 20px 10px;
+            text-align: center;
         }
-        .options button:hover {
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        header p {
+            margin: 5px 0;
+            font-size: 1.2rem;
+        }
+        nav {
             background: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 10px;
         }
-        #timer {
-            margin-top: 10px;
-            font-size: 18px;
-            color: red;
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
             font-weight: bold;
+            transition: color 0.3s;
         }
-        #result {
+        nav a:hover {
+            color: #ffcc00;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .container h2 {
+            color: #007BFF;
+            margin-bottom: 10px;
+        }
+        .services {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
             margin-top: 20px;
-            font-size: 22px;
-            font-weight: bold;
+        }
+        .service {
+            flex: 1;
+            min-width: 300px;
+            margin: 10px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        .service:hover {
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
+        }
+        .service h3 {
+            color: #0056b3;
+        }
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+        a.contact {
+            color: #ffcc00;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <div id="quiz-container">
-        <h1>Uitdagende Geschiedenisquiz</h1>
-        <div id="timer">Tijd over: 20 seconden</div>
-        <div id="question" class="question">Vraag wordt geladen...</div>
-        <div id="options" class="options"></div>
-        <div id="result"></div>
+    <header>
+        <h1>Jonk Multiservices</h1>
+        <p>Professionele SISGrass Specialist | Dave Jonk</p>
+    </header>
+    <nav>
+        <a href="#over-mij">Over Mij</a>
+        <a href="#diensten">Diensten</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <div class="container" id="over-mij">
+        <h2>Over Mij</h2>
+        <p>
+            Hallo, mijn naam is <strong>Dave Jonk</strong>. Ik ben <strong>21 jaar oud</strong> en werk als zelfstandig ondernemer (ZZP'er). 
+            Mijn expertise ligt in het werken met <strong>SISGrass</strong>, een innovatieve technologie voor hybride grasvelden.
+            Met passie en precisie help ik bij de aanleg en het onderhoud van hoogwaardige sportvelden.
+        </p>
     </div>
-
-    <script>
-        const questions = [
-            {
-                question: "Welke keizer bouwde de Chinese Muur verder uit?",
-                options: ["Kublai Khan", "Qin Shi Huang", "Han Wudi", "Ming Chengzu"],
-                answer: "Qin Shi Huang"
-            },
-            {
-                question: "In welk jaar werd de Magna Carta ondertekend?",
-                options: ["1215", "1066", "1492", "1314"],
-                answer: "1215"
-            },
-            {
-                question: "Welke stad werd in 1453 ingenomen door de Ottomanen?",
-                options: ["Caïro", "Athene", "Rome", "Constantinopel"],
-                answer: "Constantinopel"
-            },
-            {
-                question: "Wie schreef 'De Staat' (The Republic)?",
-                options: ["Aristoteles", "Plato", "Socrates", "Herodotus"],
-                answer: "Plato"
-            },
-            {
-                question: "Wat veroorzaakte de pest in de middeleeuwen?",
-                options: ["Bacterie", "Virus", "Schimmel", "Vervuild water"],
-                answer: "Bacterie"
-            },
-            {
-                question: "Wie was de farao tijdens de bouw van de Grote Piramide van Gizeh?",
-                options: ["Toetanchamon", "Cheops", "Ramses II", "Hatsjepsoet"],
-                answer: "Cheops"
-            },
-            {
-                question: "Wat was de laatste grote veldslag van Napoleon?",
-                options: ["Austerlitz", "Trafalgar", "Waterloo", "Borodino"],
-                answer: "Waterloo"
-            },
-            {
-                question: "Wanneer eindigde de Tweede Wereldoorlog in Europa?",
-                options: ["1944", "1945", "1946", "1947"],
-                answer: "1945"
-            },
-            {
-                question: "Wie was de oprichter van het Mongoolse Rijk?",
-                options: ["Genghis Khan", "Attila de Hun", "Kublai Khan", "Timoer Lenk"],
-                answer: "Genghis Khan"
-            },
-            {
-                question: "Wat was de naam van de eerste menselijke ruimtevlucht?",
-                options: ["Apollo 11", "Vostok 1", "Sputnik", "Gemini 4"],
-                answer: "Vostok 1"
-            }
-        ];
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let wrong = 0;
-        let timer;
-        let timeLeft = 20;
-
-        const questionElement = document.getElementById("question");
-        const optionsElement = document.getElementById("options");
-        const resultElement = document.getElementById("result");
-        const timerElement = document.getElementById("timer");
-
-        function loadQuestion() {
-            clearInterval(timer); // Reset timer
-            timeLeft = 20;
-            timerElement.innerText = `Tijd over: ${timeLeft} seconden`;
-            timer = setInterval(countdown, 1000);
-
-            const currentQuestion = questions[currentQuestionIndex];
-            questionElement.innerText = currentQuestion.question;
-            optionsElement.innerHTML = "";
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement("button");
-                button.innerText = option;
-                button.onclick = () => checkAnswer(option);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function countdown() {
-            timeLeft--;
-            timerElement.innerText = `Tijd over: ${timeLeft} seconden`;
-            if (timeLeft === 0) {
-                clearInterval(timer);
-                wrong++;
-                alert("⏰ Tijd voorbij! Dit antwoord telt als fout.");
-                nextQuestion();
-            }
-        }
-
-        function checkAnswer(selected) {
-            clearInterval(timer);
-            const currentQuestion = questions[currentQuestionIndex];
-            if (selected === currentQuestion.answer) {
-                score++;
-                alert("✅ Goed antwoord!");
-            } else {
-                wrong++;
-                alert(`❌ Fout! Het juiste antwoord was: ${currentQuestion.answer}`);
-            }
-            nextQuestion();
-        }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                loadQuestion();
-            } else {
-                showResult();
-            }
-        }
-
-        function showResult() {
-            questionElement.innerText = "Quiz voltooid!";
-            optionsElement.innerHTML = "";
-            timerElement.innerText = "";
-            resultElement.innerHTML = `Je hebt ${score} van de ${questions.length} vragen goed! Fouten: ${wrong}`;
-        }
-
-        loadQuestion();
-    </script>
+    <div class="container" id="diensten">
+        <h2>Mijn Diensten</h2>
+        <div class="services">
+            <div class="service">
+                <h3>Installatie van SISGrass</h3>
+                <p>Vakkundige installatie van hybride grasvelden, geschikt voor professionele sportomstandigheden.</p>
+            </div>
+            <div class="service">
+                <h3>Onderhoud</h3>
+                <p>Professioneel onderhoud om de kwaliteit en levensduur van SISGrass velden te garanderen.</p>
+            </div>
+            <div class="service">
+                <h3>Advies en Begeleiding</h3>
+                <p>Persoonlijk advies en begeleiding voor het optimaal benutten van hybride grasvelden.</p>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="contact">
+        <h2>Contact</h2>
+        <p>Benieuwd wat ik voor jou kan betekenen? Neem dan gerust contact met mij op!</p>
+        <p>E-mail: <a class="contact" href="mailto:info@jonkmultiservices.nl">info@jonkmultiservices.nl</a></p>
+        <p>Telefoon: <a class="contact" href="tel:+31612345678">+31 6 12345678</a></p>
+    </div>
+    <footer>
+        <p>© 2024 Jonk Multiservices. Alle rechten voorbehouden.</p>
+        <p>Ontworpen door Dave Jonk</p>
+    </footer>
 </body>
 </html>
