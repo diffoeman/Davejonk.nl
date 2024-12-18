@@ -3,94 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verrassing!</title>
+    <title>Raad het Land</title>
     <style>
         body {
-            margin: 0;
-            overflow: hidden;
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white;
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
         }
         h1 {
-            position: absolute;
-            top: 10%;
-            font-size: 3rem;
-            text-align: center;
-            width: 100%;
+            margin: 20px;
         }
-        canvas {
-            display: block;
-            background: black;
-            border: 2px solid white;
+        #flag {
+            width: 300px;
+            height: 200px;
+            margin: 20px auto;
+            border: 5px solid #333;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result {
+            margin: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>Laat je verrassen! 🎉</h1>
-    <canvas id="surprise"></canvas>
+    <h1>Raad het Land 🌍</h1>
+    <div id="flag"></div>
+    <input type="text" id="guess" placeholder="Typ hier het land...">
+    <button onclick="checkGuess()">Controleer</button>
+    <div id="result"></div>
+
     <script>
-        const canvas = document.getElementById('surprise');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const countries = [
+            { name: "Nederland", flag: "https://flagcdn.com/w320/nl.png" },
+            { name: "Duitsland", flag: "https://flagcdn.com/w320/de.png" },
+            { name: "Frankrijk", flag: "https://flagcdn.com/w320/fr.png" },
+            { name: "Italië", flag: "https://flagcdn.com/w320/it.png" },
+            { name: "Japan", flag: "https://flagcdn.com/w320/jp.png" },
+        ];
 
-        const particles = [];
-        const colors = ['#ff4b2b', '#ff416c', '#2bff4b', '#2b9bff', '#ffeb3b'];
+        let currentCountry = {};
+        const flagElement = document.getElementById("flag");
+        const resultElement = document.getElementById("result");
 
-        class Particle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 5 + 1;
-                this.speedX = Math.random() * 3 - 1.5;
-                this.speedY = Math.random() * 3 - 1.5;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.size > 0.2) this.size -= 0.1;
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+        function loadCountry() {
+            currentCountry = countries[Math.floor(Math.random() * countries.length)];
+            flagElement.style.backgroundImage = `url(${currentCountry.flag})`;
+            flagElement.style.backgroundSize = "cover";
         }
 
-        function handleParticles() {
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-
-                if (particles[i].size <= 0.3) {
-                    particles.splice(i, 1);
-                    i--;
-                }
+        function checkGuess() {
+            const userGuess = document.getElementById("guess").value.trim().toLowerCase();
+            if (userGuess === currentCountry.name.toLowerCase()) {
+                resultElement.innerHTML = "🎉 Goed geraden!";
+            } else {
+                resultElement.innerHTML = `❌ Fout! Het juiste antwoord is ${currentCountry.name}.`;
             }
+            document.getElementById("guess").value = "";
+            setTimeout(() => {
+                resultElement.innerHTML = "";
+                loadCountry();
+            }, 2000);
         }
 
-        window.addEventListener('mousemove', (e) => {
-            for (let i = 0; i < 5; i++) {
-                particles.push(new Particle(e.x, e.y));
-            }
-        });
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            handleParticles();
-            requestAnimationFrame(animate);
-        }
-
-        animate();
+        window.onload = loadCountry;
     </script>
 </body>
 </html>
