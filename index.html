@@ -3,83 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raad het Land</title>
+    <title>Raad het Land - Klik op de Kaart</title>
     <style>
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            color: #333;
         }
         h1 {
             margin: 20px;
         }
-        #flag {
-            width: 300px;
-            height: 200px;
-            margin: 20px auto;
-            border: 5px solid #333;
+        #game {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
         }
-        input {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
+        #world-map {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border: 2px solid #333;
+            cursor: crosshair;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #result {
-            margin: 20px;
+        #info {
+            margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
+        }
+        #score {
+            margin-top: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <h1>Raad het Land 🌍</h1>
-    <div id="flag"></div>
-    <input type="text" id="guess" placeholder="Typ hier het land...">
-    <button onclick="checkGuess()">Controleer</button>
-    <div id="result"></div>
+    <h1>Raad het Land - Klik op de Kaart 🌍</h1>
+    <p id="info">Klik op: <span id="country-name">Nederland</span></p>
+    <div id="game">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Equirectangular_projection_SW.jpg/1200px-Equirectangular_projection_SW.jpg" alt="Wereldkaart" id="world-map">
+    </div>
+    <div id="score">Score: <span id="score-value">0</span></div>
 
     <script>
-        const countries = [
-            { name: "Nederland", flag: "https://flagcdn.com/w320/nl.png" },
-            { name: "Duitsland", flag: "https://flagcdn.com/w320/de.png" },
-            { name: "Frankrijk", flag: "https://flagcdn.com/w320/fr.png" },
-            { name: "Italië", flag: "https://flagcdn.com/w320/it.png" },
-            { name: "Japan", flag: "https://flagcdn.com/w320/jp.png" },
-        ];
+        const countries = {
+            "nederland": { x: 525, y: 180 }, // Nederland
+            "duitsland": { x: 540, y: 190 }, // Duitsland
+            "frankrijk": { x: 500, y: 240 }, // Frankrijk
+            "italië": { x: 550, y: 250 }, // Italië
+            "japan": { x: 960, y: 220 } // Japan
+        };
 
-        let currentCountry = {};
-        const flagElement = document.getElementById("flag");
-        const resultElement = document.getElementById("result");
+        let currentCountry = "";
+        let score = 0;
 
-        function loadCountry() {
-            currentCountry = countries[Math.floor(Math.random() * countries.length)];
-            flagElement.style.backgroundImage = `url(${currentCountry.flag})`;
-            flagElement.style.backgroundSize = "cover";
+        const map = document.getElementById("world-map");
+        const info = document.getElementById("info");
+        const scoreElement = document.getElementById("score-value");
+
+        function randomCountry() {
+            const keys = Object.keys(countries);
+            return keys[Math.floor(Math.random() * keys.length)];
         }
 
-        function checkGuess() {
-            const userGuess = document.getElementById("guess").value.trim().toLowerCase();
-            if (userGuess === currentCountry.name.toLowerCase()) {
-                resultElement.innerHTML = "🎉 Goed geraden!";
+        function loadNewCountry() {
+            currentCountry = randomCountry();
+            document.getElementById("country-name").innerText = currentCountry.charAt(0).toUpperCase() + currentCountry.slice(1);
+        }
+
+        map.addEventListener("click", (e) => {
+            const rect = map.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            const target = countries[currentCountry];
+            const distance = Math.sqrt((clickX - target.x) ** 2 + (clickY - target.y) ** 2);
+
+            if (distance < 30) {
+                alert("🎉 Goed gedaan! Je hebt " + currentCountry + " gevonden.");
+                score++;
             } else {
-                resultElement.innerHTML = `❌ Fout! Het juiste antwoord is ${currentCountry.name}.`;
+                alert("❌ Mis! Probeer het volgende land.");
             }
-            document.getElementById("guess").value = "";
-            setTimeout(() => {
-                resultElement.innerHTML = "";
-                loadCountry();
-            }, 2000);
-        }
+            scoreElement.innerText = score;
+            loadNewCountry();
+        });
 
-        window.onload = loadCountry;
+        window.onload = loadNewCountry;
     </script>
 </body>
 </html>
