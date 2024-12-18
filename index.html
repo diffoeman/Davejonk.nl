@@ -3,57 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raad het Land - Europa</title>
+    <title>Geschiedenisquiz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            margin: 0;
+            background: #f4f4f4;
             color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #quiz-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
         }
         h1 {
-            margin: 20px;
+            margin-bottom: 20px;
+            color: #444;
         }
-        #info {
-            margin: 10px;
+        .question {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .options button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .options button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
             font-size: 20px;
             font-weight: bold;
-        }
-        #score {
-            margin: 10px;
-            font-size: 16px;
-        }
-        svg {
-            margin-top: 20px;
-            width: 80%;
-            height: auto;
-            border: 1px solid #333;
-            cursor: pointer;
-        }
-        path {
-            fill: #d9d9d9;
-            stroke: #333;
-            stroke-width: 0.5;
-            transition: fill 0.3s;
-        }
-        path:hover {
-            fill: #ff8c00;
         }
     </style>
 </head>
 <body>
-    <h1>Raad het Land - Klik op de Kaart van Europa 🌍</h1>
-    <p id="info">Klik op: <span id="country-name">...</span></p>
-    <div id="score">Goed: <span id="correct">0</span> | Fout: <span id="wrong">0</span></div>
-
-    <!-- SVG Europa Kaart -->
-    <div id="map-container">
-        <iframe src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Blank_map_of_Europe_%28microstates%29.svg" width="800" height="600" style="border:none;"></iframe>
+    <div id="quiz-container">
+        <h1>Geschiedenisquiz</h1>
+        <div id="question" class="question">Vraag wordt geladen...</div>
+        <div id="options" class="options"></div>
+        <div id="result"></div>
     </div>
 
     <script>
-        // Functioneel script komt eraan, zoals detectie en matching van landen
+        const questions = [
+            {
+                question: "In welk jaar vond de Franse Revolutie plaats?",
+                options: ["1789", "1804", "1765", "1815"],
+                answer: "1789"
+            },
+            {
+                question: "Wie was de eerste president van de Verenigde Staten?",
+                options: ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"],
+                answer: "George Washington"
+            },
+            {
+                question: "Welke muur viel in 1989, wat leidde tot de hereniging van Duitsland?",
+                options: ["Chinese Muur", "Berliner Muur", "Maginotlinie", "IJzeren Gordijn"],
+                answer: "Berliner Muur"
+            },
+            {
+                question: "Wat was de hoofdstad van het Romeinse Rijk?",
+                options: ["Rome", "Constantinopel", "Athene", "Carthago"],
+                answer: "Rome"
+            },
+            {
+                question: "Wie schreef het communistisch manifest?",
+                options: ["Karl Marx en Friedrich Engels", "Lenin", "Trotski", "Mao Zedong"],
+                answer: "Karl Marx en Friedrich Engels"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const resultElement = document.getElementById("result");
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerText = currentQuestion.question;
+            optionsElement.innerHTML = "";
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement("button");
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selected === currentQuestion.answer) {
+                score++;
+                alert("✅ Goed antwoord!");
+            } else {
+                alert(`❌ Fout antwoord! Het juiste antwoord was: ${currentQuestion.answer}`);
+            }
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            questionElement.innerText = "Quiz voltooid!";
+            optionsElement.innerHTML = "";
+            resultElement.innerText = `Je hebt ${score} van de ${questions.length} vragen goed!`;
+        }
+
+        loadQuestion();
     </script>
 </body>
 </html>
